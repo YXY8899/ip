@@ -1,8 +1,8 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Jarvis {
-    private static Task[] tasks = new Task[100];
-    private static int taskCount = 0;
+    private static ArrayList<Task> tasks = new ArrayList<>();
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -27,6 +27,8 @@ public class Jarvis {
                     handleMark(input);
                 } else if (input.startsWith("unmark ")) {
                     handleUnmark(input);
+                } else if (input.startsWith("delete ")) {
+                    handleDelete(input);
                 } else if (input.startsWith("todo ")) {
                     handleTodo(input);
                 } else if (input.startsWith("deadline ")) {
@@ -51,8 +53,8 @@ public class Jarvis {
     private static void handleList() {
         System.out.println("____________________________________________________________");
         System.out.println("Here are the tasks in your archive:");
-        for (int i = 0; i < taskCount; i++) {
-            System.out.println((i + 1) + "." + tasks[i]);
+        for (int i = 0; i < tasks.size(); i++) {
+            System.out.println((i + 1) + "." + tasks.get(i));
         }
         System.out.println("____________________________________________________________");
     }
@@ -67,14 +69,14 @@ public class Jarvis {
         try {
             int taskIndex = Integer.parseInt(indexStr) - 1;
 
-            if (taskIndex < 0 || taskIndex >= taskCount) {
-                throw new InvalidTaskNumberException(taskIndex + 1, taskCount);
+            if (taskIndex < 0 || taskIndex >= tasks.size()) {
+                throw new InvalidTaskNumberException(taskIndex + 1, tasks.size());
             }
 
-            tasks[taskIndex].markAsDone();
+            tasks.get(taskIndex).markAsDone();
             System.out.println("____________________________________________________________");
             System.out.println("Nice! I've marked this task as completed:");
-            System.out.println("  " + tasks[taskIndex]);
+            System.out.println("  " + tasks.get(taskIndex));
             System.out.println("____________________________________________________________");
         } catch (NumberFormatException e) {
             throw new InvalidTaskNumberException("Please provide a valid task number. Usage: mark [task number]");
@@ -91,17 +93,42 @@ public class Jarvis {
         try {
             int taskIndex = Integer.parseInt(indexStr) - 1;
 
-            if (taskIndex < 0 || taskIndex >= taskCount) {
-                throw new InvalidTaskNumberException(taskIndex + 1, taskCount);
+            if (taskIndex < 0 || taskIndex >= tasks.size()) {
+                throw new InvalidTaskNumberException(taskIndex + 1, tasks.size());
             }
 
-            tasks[taskIndex].markAsNotDone();
+            tasks.get(taskIndex).markAsNotDone();
             System.out.println("____________________________________________________________");
             System.out.println("OK, I've revert the task completion");
-            System.out.println("  " + tasks[taskIndex]);
+            System.out.println("  " + tasks.get(taskIndex));
             System.out.println("____________________________________________________________");
         } catch (NumberFormatException e) {
             throw new InvalidTaskNumberException("Please provide a valid task number. Usage: unmark [task number]");
+        }
+    }
+
+    private static void handleDelete(String input) throws JarvisException {
+        String indexStr = input.substring(7).trim();
+
+        if (indexStr.isEmpty()) {
+            throw new MissingArgumentException("which task to delete", "delete [task number]");
+        }
+
+        try {
+            int taskIndex = Integer.parseInt(indexStr) - 1;
+
+            if (taskIndex < 0 || taskIndex >= tasks.size()) {
+                throw new InvalidTaskNumberException(taskIndex + 1, tasks.size());
+            }
+
+            Task removedTask = tasks.remove(taskIndex);
+            System.out.println("____________________________________________________________");
+            System.out.println("Noted. I've removed this task:");
+            System.out.println("  " + removedTask);
+            System.out.println("Now you have " + tasks.size() + " tasks in the list.");
+            System.out.println("____________________________________________________________");
+        } catch (NumberFormatException e) {
+            throw new InvalidTaskNumberException("Please provide a valid task number. Usage: delete [task number]");
         }
     }
 
@@ -113,12 +140,11 @@ public class Jarvis {
         }
 
         Task newTask = new Todo(description);
-        tasks[taskCount] = newTask;
-        taskCount++;
+        tasks.add(newTask);
         System.out.println("____________________________________________________________");
         System.out.println("Got it. I've added this task:");
         System.out.println("  " + newTask);
-        System.out.println("Now you have " + taskCount + " tasks in the list.");
+        System.out.println("Now you have " + tasks.size() + " tasks in the list.");
         System.out.println("____________________________________________________________");
     }
 
@@ -146,12 +172,11 @@ public class Jarvis {
         }
 
         Task newTask = new Deadline(description, by);
-        tasks[taskCount] = newTask;
-        taskCount++;
+        tasks.add(newTask);
         System.out.println("____________________________________________________________");
         System.out.println("Got it. I've added this task:");
         System.out.println("  " + newTask);
-        System.out.println("Now you have " + taskCount + " tasks in the list.");
+        System.out.println("Now you have " + tasks.size() + " tasks in the list.");
         System.out.println("____________________________________________________________");
     }
 
@@ -189,12 +214,11 @@ public class Jarvis {
         }
 
         Task newTask = new Event(description, from, to);
-        tasks[taskCount] = newTask;
-        taskCount++;
+        tasks.add(newTask);
         System.out.println("____________________________________________________________");
         System.out.println("Got it. I've added this task:");
         System.out.println("  " + newTask);
-        System.out.println("Now you have " + taskCount + " tasks in the list.");
+        System.out.println("Now you have " + tasks.size() + " tasks in the list.");
         System.out.println("____________________________________________________________");
     }
 }
