@@ -40,12 +40,44 @@ public class Jarvis {
                 System.out.println("OK, I've revert the task completion");
                 System.out.println("  " + tasks[taskIndex]);
                 System.out.println("____________________________________________________________");
-            } else {
-                Task newTask = new Task(input);
+            } else if (input.startsWith("todo ")) {
+                String description = input.substring(5);
+                Task newTask = new Todo(description);
                 tasks[taskCount] = newTask;
                 taskCount++;
                 System.out.println("____________________________________________________________");
-                System.out.println("'" + input + "'" + " has been stored");
+                System.out.println("Got it. I've added this task:");
+                System.out.println("  " + newTask);
+                System.out.println("Now you have " + taskCount + " tasks in the list.");
+                System.out.println("____________________________________________________________");
+            } else if (input.startsWith("deadline ")) {
+                String[] parts = input.substring(9).split(" /by ");
+                String description = parts[0];
+                String by = parts[1];
+                Task newTask = new Deadline(description, by);
+                tasks[taskCount] = newTask;
+                taskCount++;
+                System.out.println("____________________________________________________________");
+                System.out.println("Got it. I've added this task:");
+                System.out.println("  " + newTask);
+                System.out.println("Now you have " + taskCount + " tasks in the list.");
+                System.out.println("____________________________________________________________");
+            } else if (input.startsWith("event ")) {
+                String[] parts = input.substring(6).split(" /from | /to ");
+                String description = parts[0];
+                String from = parts[1];
+                String to = parts[2];
+                Task newTask = new Event(description, from, to);
+                tasks[taskCount] = newTask;
+                taskCount++;
+                System.out.println("____________________________________________________________");
+                System.out.println("Got it. I've added this task:");
+                System.out.println("  " + newTask);
+                System.out.println("Now you have " + taskCount + " tasks in the list.");
+                System.out.println("____________________________________________________________");
+            } else {
+                System.out.println("____________________________________________________________");
+                System.out.println("I'm sorry Master, I don't understand that command.");
                 System.out.println("____________________________________________________________");
             }
         }
