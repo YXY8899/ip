@@ -1,10 +1,11 @@
 import java.util.Scanner;
 
 public class Jarvis {
+    private static Task[] tasks = new Task[100];
+    private static int taskCount = 0;
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        Task[] tasks = new Task[100];
-        int taskCount = 0;
 
         System.out.println("____________________________________________________________");
         System.out.println("Hello Master! I'm Jarvis your personal assistance!");
@@ -13,75 +14,187 @@ public class Jarvis {
 
         String input = "";
         while (!input.equals("bye")) {
-            input = scanner.nextLine();
+            input = scanner.nextLine().trim();
 
-            if (input.equals("bye")) {
-                System.out.println("____________________________________________________________");
-                System.out.println("Goodbye Master. Hope to see you again soon!");
-                System.out.println("____________________________________________________________");
-            } else if (input.equals("list")) {
-                System.out.println("____________________________________________________________");
-                System.out.println("Here are the tasks in your archive:");
-                for (int i = 0; i < taskCount; i++) {
-                    System.out.println((i + 1) + "." + tasks[i]);
+            try {
+                if (input.equals("bye")) {
+                    System.out.println("____________________________________________________________");
+                    System.out.println("Goodbye Master. Hope to see you again soon!");
+                    System.out.println("____________________________________________________________");
+                } else if (input.equals("list")) {
+                    handleList();
+                } else if (input.startsWith("mark ")) {
+                    handleMark(input);
+                } else if (input.startsWith("unmark ")) {
+                    handleUnmark(input);
+                } else if (input.startsWith("todo ")) {
+                    handleTodo(input);
+                } else if (input.startsWith("deadline ")) {
+                    handleDeadline(input);
+                } else if (input.startsWith("event ")) {
+                    handleEvent(input);
+                } else if (input.isEmpty()) {
+                    // Do nothing for empty input
+                } else {
+                    throw new InvalidCommandException();
                 }
+            } catch (JarvisException e) {
                 System.out.println("____________________________________________________________");
-            } else if (input.startsWith("mark ")) {
-                int taskIndex = Integer.parseInt(input.substring(5)) - 1;
-                tasks[taskIndex].markAsDone();
-                System.out.println("____________________________________________________________");
-                System.out.println("Nice! I've marked this task as completed:");
-                System.out.println("  " + tasks[taskIndex]);
-                System.out.println("____________________________________________________________");
-            } else if (input.startsWith("unmark ")) {
-                int taskIndex = Integer.parseInt(input.substring(7)) - 1;
-                tasks[taskIndex].markAsNotDone();
-                System.out.println("____________________________________________________________");
-                System.out.println("OK, I've revert the task completion");
-                System.out.println("  " + tasks[taskIndex]);
-                System.out.println("____________________________________________________________");
-            } else if (input.startsWith("todo ")) {
-                String description = input.substring(5);
-                Task newTask = new Todo(description);
-                tasks[taskCount] = newTask;
-                taskCount++;
-                System.out.println("____________________________________________________________");
-                System.out.println("Got it. I've added this task:");
-                System.out.println("  " + newTask);
-                System.out.println("Now you have " + taskCount + " tasks in the list.");
-                System.out.println("____________________________________________________________");
-            } else if (input.startsWith("deadline ")) {
-                String[] parts = input.substring(9).split(" /by ");
-                String description = parts[0];
-                String by = parts[1];
-                Task newTask = new Deadline(description, by);
-                tasks[taskCount] = newTask;
-                taskCount++;
-                System.out.println("____________________________________________________________");
-                System.out.println("Got it. I've added this task:");
-                System.out.println("  " + newTask);
-                System.out.println("Now you have " + taskCount + " tasks in the list.");
-                System.out.println("____________________________________________________________");
-            } else if (input.startsWith("event ")) {
-                String[] parts = input.substring(6).split(" /from | /to ");
-                String description = parts[0];
-                String from = parts[1];
-                String to = parts[2];
-                Task newTask = new Event(description, from, to);
-                tasks[taskCount] = newTask;
-                taskCount++;
-                System.out.println("____________________________________________________________");
-                System.out.println("Got it. I've added this task:");
-                System.out.println("  " + newTask);
-                System.out.println("Now you have " + taskCount + " tasks in the list.");
-                System.out.println("____________________________________________________________");
-            } else {
-                System.out.println("____________________________________________________________");
-                System.out.println("I'm sorry Master, I don't understand that command.");
+                System.out.println(e.getMessage());
                 System.out.println("____________________________________________________________");
             }
         }
 
         scanner.close();
+    }
+
+    private static void handleList() {
+        System.out.println("____________________________________________________________");
+        System.out.println("Here are the tasks in your archive:");
+        for (int i = 0; i < taskCount; i++) {
+            System.out.println((i + 1) + "." + tasks[i]);
+        }
+        System.out.println("____________________________________________________________");
+    }
+
+    private static void handleMark(String input) throws JarvisException {
+        String indexStr = input.substring(5).trim();
+
+        if (indexStr.isEmpty()) {
+            throw new MissingArgumentException("which task to mark", "mark [task number]");
+        }
+
+        try {
+            int taskIndex = Integer.parseInt(indexStr) - 1;
+
+            if (taskIndex < 0 || taskIndex >= taskCount) {
+                throw new InvalidTaskNumberException(taskIndex + 1, taskCount);
+            }
+
+            tasks[taskIndex].markAsDone();
+            System.out.println("____________________________________________________________");
+            System.out.println("Nice! I've marked this task as completed:");
+            System.out.println("  " + tasks[taskIndex]);
+            System.out.println("____________________________________________________________");
+        } catch (NumberFormatException e) {
+            throw new InvalidTaskNumberException("Please provide a valid task number. Usage: mark [task number]");
+        }
+    }
+
+    private static void handleUnmark(String input) throws JarvisException {
+        String indexStr = input.substring(7).trim();
+
+        if (indexStr.isEmpty()) {
+            throw new MissingArgumentException("which task to unmark", "unmark [task number]");
+        }
+
+        try {
+            int taskIndex = Integer.parseInt(indexStr) - 1;
+
+            if (taskIndex < 0 || taskIndex >= taskCount) {
+                throw new InvalidTaskNumberException(taskIndex + 1, taskCount);
+            }
+
+            tasks[taskIndex].markAsNotDone();
+            System.out.println("____________________________________________________________");
+            System.out.println("OK, I've revert the task completion");
+            System.out.println("  " + tasks[taskIndex]);
+            System.out.println("____________________________________________________________");
+        } catch (NumberFormatException e) {
+            throw new InvalidTaskNumberException("Please provide a valid task number. Usage: unmark [task number]");
+        }
+    }
+
+    private static void handleTodo(String input) throws JarvisException {
+        String description = input.substring(5).trim();
+
+        if (description.isEmpty()) {
+            throw new EmptyDescriptionException("todo");
+        }
+
+        Task newTask = new Todo(description);
+        tasks[taskCount] = newTask;
+        taskCount++;
+        System.out.println("____________________________________________________________");
+        System.out.println("Got it. I've added this task:");
+        System.out.println("  " + newTask);
+        System.out.println("Now you have " + taskCount + " tasks in the list.");
+        System.out.println("____________________________________________________________");
+    }
+
+    private static void handleDeadline(String input) throws JarvisException {
+        String details = input.substring(9).trim();
+
+        if (details.isEmpty()) {
+            throw new EmptyDescriptionException("deadline");
+        }
+
+        if (!details.contains(" /by ")) {
+            throw new InvalidFormatException("Please specify the deadline using '/by'. Usage: deadline [description] /by [date]");
+        }
+
+        String[] parts = details.split(" /by ", 2);
+        String description = parts[0].trim();
+        String by = parts.length > 1 ? parts[1].trim() : "";
+
+        if (description.isEmpty()) {
+            throw new EmptyDescriptionException("deadline");
+        }
+
+        if (by.isEmpty()) {
+            throw new MissingArgumentException("when the task is due", "deadline [description] /by [date]");
+        }
+
+        Task newTask = new Deadline(description, by);
+        tasks[taskCount] = newTask;
+        taskCount++;
+        System.out.println("____________________________________________________________");
+        System.out.println("Got it. I've added this task:");
+        System.out.println("  " + newTask);
+        System.out.println("Now you have " + taskCount + " tasks in the list.");
+        System.out.println("____________________________________________________________");
+    }
+
+    private static void handleEvent(String input) throws JarvisException {
+        String details = input.substring(6).trim();
+
+        if (details.isEmpty()) {
+            throw new EmptyDescriptionException("event");
+        }
+
+        if (!details.contains(" /from ") || !details.contains(" /to ")) {
+            throw new InvalidFormatException("Please specify the event time using '/from' and '/to'. Usage: event [description] /from [start] /to [end]");
+        }
+
+        String[] parts = details.split(" /from | /to ");
+
+        if (parts.length < 3) {
+            throw new InvalidFormatException("Please provide both start and end times. Usage: event [description] /from [start] /to [end]");
+        }
+
+        String description = parts[0].trim();
+        String from = parts[1].trim();
+        String to = parts[2].trim();
+
+        if (description.isEmpty()) {
+            throw new EmptyDescriptionException("event");
+        }
+
+        if (from.isEmpty()) {
+            throw new MissingArgumentException("when the event starts", "event [description] /from [start] /to [end]");
+        }
+
+        if (to.isEmpty()) {
+            throw new MissingArgumentException("when the event ends", "event [description] /from [start] /to [end]");
+        }
+
+        Task newTask = new Event(description, from, to);
+        tasks[taskCount] = newTask;
+        taskCount++;
+        System.out.println("____________________________________________________________");
+        System.out.println("Got it. I've added this task:");
+        System.out.println("  " + newTask);
+        System.out.println("Now you have " + taskCount + " tasks in the list.");
+        System.out.println("____________________________________________________________");
     }
 }
