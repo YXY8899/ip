@@ -61,24 +61,29 @@ public class Storage {
 
         Task task = null;
 
-        switch (type) {
-        case "T":
-            task = new Todo(description);
-            break;
-        case "D":
-            if (parts.length >= 4) {
-                String by = parts[3].trim();
-                task = new Deadline(description, by);
+        try {
+            switch (type) {
+            case "T":
+                task = new Todo(description);
+                break;
+            case "D":
+                if (parts.length >= 4) {
+                    String by = parts[3].trim();
+                    task = new Deadline(description, by);
+                }
+                break;
+            case "E":
+                if (parts.length >= 5) {
+                    String from = parts[3].trim();
+                    String to = parts[4].trim();
+                    task = new Event(description, from, to);
+                }
+                break;
+            default:
+                return null;
             }
-            break;
-        case "E":
-            if (parts.length >= 5) {
-                String from = parts[3].trim();
-                String to = parts[4].trim();
-                task = new Event(description, from, to);
-            }
-            break;
-        default:
+        } catch (IllegalArgumentException e) {
+            System.out.println("Warning: Skipping corrupted task entry: " + line);
             return null;
         }
 
