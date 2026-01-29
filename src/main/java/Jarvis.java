@@ -1,11 +1,18 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * Main class for the Jarvis task management application.
+ */
 public class Jarvis {
+    private static final String FILE_PATH = "./data/jarvis.txt";
     private static ArrayList<Task> tasks = new ArrayList<>();
+    private static Storage storage = new Storage(FILE_PATH);
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+
+        tasks = storage.load();
 
         System.out.println("____________________________________________________________");
         System.out.println("Hello Master! I'm Jarvis your personal assistance!");
@@ -74,6 +81,7 @@ public class Jarvis {
             }
 
             tasks.get(taskIndex).markAsDone();
+            storage.save(tasks);
             System.out.println("____________________________________________________________");
             System.out.println("Nice! I've marked this task as completed:");
             System.out.println("  " + tasks.get(taskIndex));
@@ -98,6 +106,7 @@ public class Jarvis {
             }
 
             tasks.get(taskIndex).markAsNotDone();
+            storage.save(tasks);
             System.out.println("____________________________________________________________");
             System.out.println("OK, I've revert the task completion");
             System.out.println("  " + tasks.get(taskIndex));
@@ -122,6 +131,7 @@ public class Jarvis {
             }
 
             Task removedTask = tasks.remove(taskIndex);
+            storage.save(tasks);
             System.out.println("____________________________________________________________");
             System.out.println("Noted. I've removed this task:");
             System.out.println("  " + removedTask);
@@ -141,6 +151,7 @@ public class Jarvis {
 
         Task newTask = new Todo(description);
         tasks.add(newTask);
+        storage.save(tasks);
         System.out.println("____________________________________________________________");
         System.out.println("Got it. I've added this task:");
         System.out.println("  " + newTask);
@@ -173,6 +184,7 @@ public class Jarvis {
 
         Task newTask = new Deadline(description, by);
         tasks.add(newTask);
+        storage.save(tasks);
         System.out.println("____________________________________________________________");
         System.out.println("Got it. I've added this task:");
         System.out.println("  " + newTask);
@@ -215,6 +227,7 @@ public class Jarvis {
 
         Task newTask = new Event(description, from, to);
         tasks.add(newTask);
+        storage.save(tasks);
         System.out.println("____________________________________________________________");
         System.out.println("Got it. I've added this task:");
         System.out.println("  " + newTask);
