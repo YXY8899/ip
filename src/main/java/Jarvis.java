@@ -182,7 +182,13 @@ public class Jarvis {
             throw new MissingArgumentException("when the task is due", "deadline [description] /by [date]");
         }
 
-        Task newTask = new Deadline(description, by);
+        Task newTask;
+        try {
+            newTask = new Deadline(description, by);
+        } catch (IllegalArgumentException e) {
+            throw new InvalidFormatException("Invalid date format. Please use yyyy-MM-dd or yyyy-MM-dd HHmm "
+                    + "(e.g., 2019-10-15 or 2019-10-15 1800)");
+        }
         tasks.add(newTask);
         storage.save(tasks);
         System.out.println("____________________________________________________________");
@@ -225,7 +231,13 @@ public class Jarvis {
             throw new MissingArgumentException("when the event ends", "event [description] /from [start] /to [end]");
         }
 
-        Task newTask = new Event(description, from, to);
+        Task newTask;
+        try {
+            newTask = new Event(description, from, to);
+        } catch (IllegalArgumentException e) {
+            throw new InvalidFormatException("Invalid date format. Please use yyyy-MM-dd or yyyy-MM-dd HHmm "
+                    + "(e.g., 2019-10-15 or 2019-10-15 1800)");
+        }
         tasks.add(newTask);
         storage.save(tasks);
         System.out.println("____________________________________________________________");
