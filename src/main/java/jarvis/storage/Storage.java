@@ -1,8 +1,15 @@
+package jarvis.storage;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Scanner;
+
+import jarvis.task.Deadline;
+import jarvis.task.Event;
+import jarvis.task.Task;
+import jarvis.task.TaskList;
+import jarvis.task.Todo;
 
 /**
  * Handles loading and saving tasks to a file.
@@ -22,10 +29,10 @@ public class Storage {
     /**
      * Loads tasks from the storage file.
      *
-     * @return An ArrayList of tasks loaded from the file.
+     * @return A TaskList containing tasks loaded from the file.
      */
-    public ArrayList<Task> load() {
-        ArrayList<Task> tasks = new ArrayList<>();
+    public TaskList load() {
+        TaskList tasks = new TaskList();
         File file = new File(filePath);
 
         if (!file.exists()) {
@@ -95,11 +102,11 @@ public class Storage {
     }
 
     /**
-     * Saves the given list of tasks to the storage file.
+     * Saves the given task list to the storage file.
      *
-     * @param tasks The list of tasks to save.
+     * @param tasks The TaskList to save.
      */
-    public void save(ArrayList<Task> tasks) {
+    public void save(TaskList tasks) {
         try {
             File file = new File(filePath);
             File parentDir = file.getParentFile();
@@ -109,8 +116,8 @@ public class Storage {
             }
 
             FileWriter writer = new FileWriter(file);
-            for (Task task : tasks) {
-                writer.write(task.toFileString() + System.lineSeparator());
+            for (int i = 0; i < tasks.size(); i++) {
+                writer.write(tasks.get(i).toFileString() + System.lineSeparator());
             }
             writer.close();
         } catch (IOException e) {

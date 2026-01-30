@@ -1,27 +1,31 @@
+package jarvis.task;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 /**
- * Represents a task with a deadline.
+ * Represents an event with a start and end time.
  */
-public class Deadline extends Task {
+public class Event extends Task {
     private static final DateTimeFormatter INPUT_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
-    private static final DateTimeFormatter INPUT_FORMAT_DATE_ONLY = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final DateTimeFormatter OUTPUT_FORMAT = DateTimeFormatter.ofPattern("MMM dd yyyy, h:mm a");
     private static final DateTimeFormatter FILE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
 
-    protected LocalDateTime by;
+    protected LocalDateTime from;
+    protected LocalDateTime to;
 
     /**
-     * Creates a new deadline task with the given description and due date.
+     * Creates a new event with the given description and time range.
      *
-     * @param description The description of the task.
-     * @param by The deadline for the task in yyyy-MM-dd or yyyy-MM-dd HHmm format.
+     * @param description The description of the event.
+     * @param from The start time in yyyy-MM-dd or yyyy-MM-dd HHmm format.
+     * @param to The end time in yyyy-MM-dd or yyyy-MM-dd HHmm format.
      */
-    public Deadline(String description, String by) {
+    public Event(String description, String from, String to) {
         super(description);
-        this.by = parseDateTime(by);
+        this.from = parseDateTime(from);
+        this.to = parseDateTime(to);
     }
 
     private LocalDateTime parseDateTime(String dateTimeStr) {
@@ -36,21 +40,30 @@ public class Deadline extends Task {
         }
     }
 
-    public LocalDateTime getBy() {
-        return by;
+    public LocalDateTime getFrom() {
+        return from;
     }
 
-    public String getByAsString() {
-        return by.format(FILE_FORMAT);
+    public LocalDateTime getTo() {
+        return to;
+    }
+
+    public String getFromAsString() {
+        return from.format(FILE_FORMAT);
+    }
+
+    public String getToAsString() {
+        return to.format(FILE_FORMAT);
     }
 
     @Override
     public String toFileString() {
-        return "D | " + super.toFileString() + " | " + by.format(FILE_FORMAT);
+        return "E | " + super.toFileString() + " | " + from.format(FILE_FORMAT) + " | " + to.format(FILE_FORMAT);
     }
 
     @Override
     public String toString() {
-        return "[D]" + super.toString() + " (by: " + by.format(OUTPUT_FORMAT) + ")";
+        return "[E]" + super.toString() + " (from: " + from.format(OUTPUT_FORMAT)
+                + " to: " + to.format(OUTPUT_FORMAT) + ")";
     }
 }
