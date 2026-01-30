@@ -1,3 +1,5 @@
+package jarvis.task;
+
 /**
  * Represents a simple to-do task with only a description.
  */
