@@ -1,249 +1,149 @@
-import java.util.ArrayList;
-import java.util.Scanner;
-
 /**
  * Main class for the Jarvis task management application.
  */
 public class Jarvis {
     private static final String FILE_PATH = "./data/jarvis.txt";
-    private static ArrayList<Task> tasks = new ArrayList<>();
-    private static Storage storage = new Storage(FILE_PATH);
 
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+    private Storage storage;
+    private TaskList tasks;
+    private Ui ui;
 
+    /**
+     * Creates a new Jarvis instance.
+     */
+    public Jarvis() {
+        ui = new Ui();
+        storage = new Storage(FILE_PATH);
         tasks = storage.load();
+    }
 
-        System.out.println("____________________________________________________________");
-        System.out.println("Hello Master! I'm Jarvis your personal assistance!");
-        System.out.println("How may I serve you?");
-        System.out.println("____________________________________________________________");
+    /**
+     * Runs the main application loop.
+     */
+    public void run() {
+        ui.showWelcome();
 
-        String input = "";
-        while (!input.equals("bye")) {
-            input = scanner.nextLine().trim();
+        boolean isRunning = true;
+        while (isRunning) {
+            String input = ui.readCommand();
+            String command = Parser.getCommand(input);
 
             try {
-                if (input.equals("bye")) {
-                    System.out.println("____________________________________________________________");
-                    System.out.println("Goodbye Master. Hope to see you again soon!");
-                    System.out.println("____________________________________________________________");
-                } else if (input.equals("list")) {
-                    handleList();
-                } else if (input.startsWith("mark ")) {
+                switch (command) {
+                case "bye":
+                    ui.showGoodbye();
+                    isRunning = false;
+                    break;
+                case "list":
+                    ui.showTaskList(tasks);
+                    break;
+                case "mark":
                     handleMark(input);
-                } else if (input.startsWith("unmark ")) {
+                    break;
+                case "unmark":
                     handleUnmark(input);
-                } else if (input.startsWith("delete ")) {
+                    break;
+                case "delete":
                     handleDelete(input);
-                } else if (input.startsWith("todo ")) {
+                    break;
+                case "todo":
                     handleTodo(input);
-                } else if (input.startsWith("deadline ")) {
+                    break;
+                case "deadline":
                     handleDeadline(input);
-                } else if (input.startsWith("event ")) {
+                    break;
+                case "event":
                     handleEvent(input);
-                } else if (input.isEmpty()) {
+                    break;
+                case "":
                     // Do nothing for empty input
-                } else {
+                    break;
+                default:
                     throw new InvalidCommandException();
                 }
             } catch (JarvisException e) {
-                System.out.println("____________________________________________________________");
-                System.out.println(e.getMessage());
-                System.out.println("____________________________________________________________");
+                ui.showError(e.getMessage());
             }
         }
 
-        scanner.close();
+        ui.close();
     }
 
-    private static void handleList() {
-        System.out.println("____________________________________________________________");
-        System.out.println("Here are the tasks in your archive:");
-        for (int i = 0; i < tasks.size(); i++) {
-            System.out.println((i + 1) + "." + tasks.get(i));
-        }
-        System.out.println("____________________________________________________________");
-    }
+    private void handleMark(String input) throws JarvisException {
+        int index = Parser.parseTaskIndex(input, 5, "mark");
+        validateTaskIndex(index);
 
-    private static void handleMark(String input) throws JarvisException {
-        String indexStr = input.substring(5).trim();
-
-        if (indexStr.isEmpty()) {
-            throw new MissingArgumentException("which task to mark", "mark [task number]");
-        }
-
-        try {
-            int taskIndex = Integer.parseInt(indexStr) - 1;
-
-            if (taskIndex < 0 || taskIndex >= tasks.size()) {
-                throw new InvalidTaskNumberException(taskIndex + 1, tasks.size());
-            }
-
-            tasks.get(taskIndex).markAsDone();
-            storage.save(tasks);
-            System.out.println("____________________________________________________________");
-            System.out.println("Nice! I've marked this task as completed:");
-            System.out.println("  " + tasks.get(taskIndex));
-            System.out.println("____________________________________________________________");
-        } catch (NumberFormatException e) {
-            throw new InvalidTaskNumberException("Please provide a valid task number. Usage: mark [task number]");
-        }
-    }
-
-    private static void handleUnmark(String input) throws JarvisException {
-        String indexStr = input.substring(7).trim();
-
-        if (indexStr.isEmpty()) {
-            throw new MissingArgumentException("which task to unmark", "unmark [task number]");
-        }
-
-        try {
-            int taskIndex = Integer.parseInt(indexStr) - 1;
-
-            if (taskIndex < 0 || taskIndex >= tasks.size()) {
-                throw new InvalidTaskNumberException(taskIndex + 1, tasks.size());
-            }
-
-            tasks.get(taskIndex).markAsNotDone();
-            storage.save(tasks);
-            System.out.println("____________________________________________________________");
-            System.out.println("OK, I've revert the task completion");
-            System.out.println("  " + tasks.get(taskIndex));
-            System.out.println("____________________________________________________________");
-        } catch (NumberFormatException e) {
-            throw new InvalidTaskNumberException("Please provide a valid task number. Usage: unmark [task number]");
-        }
-    }
-
-    private static void handleDelete(String input) throws JarvisException {
-        String indexStr = input.substring(7).trim();
-
-        if (indexStr.isEmpty()) {
-            throw new MissingArgumentException("which task to delete", "delete [task number]");
-        }
-
-        try {
-            int taskIndex = Integer.parseInt(indexStr) - 1;
-
-            if (taskIndex < 0 || taskIndex >= tasks.size()) {
-                throw new InvalidTaskNumberException(taskIndex + 1, tasks.size());
-            }
-
-            Task removedTask = tasks.remove(taskIndex);
-            storage.save(tasks);
-            System.out.println("____________________________________________________________");
-            System.out.println("Noted. I've removed this task:");
-            System.out.println("  " + removedTask);
-            System.out.println("Now you have " + tasks.size() + " tasks in the list.");
-            System.out.println("____________________________________________________________");
-        } catch (NumberFormatException e) {
-            throw new InvalidTaskNumberException("Please provide a valid task number. Usage: delete [task number]");
-        }
-    }
-
-    private static void handleTodo(String input) throws JarvisException {
-        String description = input.substring(5).trim();
-
-        if (description.isEmpty()) {
-            throw new EmptyDescriptionException("todo");
-        }
-
-        Task newTask = new Todo(description);
-        tasks.add(newTask);
+        tasks.get(index).markAsDone();
         storage.save(tasks);
-        System.out.println("____________________________________________________________");
-        System.out.println("Got it. I've added this task:");
-        System.out.println("  " + newTask);
-        System.out.println("Now you have " + tasks.size() + " tasks in the list.");
-        System.out.println("____________________________________________________________");
+        ui.showTaskMarked(tasks.get(index));
     }
 
-    private static void handleDeadline(String input) throws JarvisException {
-        String details = input.substring(9).trim();
+    private void handleUnmark(String input) throws JarvisException {
+        int index = Parser.parseTaskIndex(input, 7, "unmark");
+        validateTaskIndex(index);
 
-        if (details.isEmpty()) {
-            throw new EmptyDescriptionException("deadline");
-        }
+        tasks.get(index).markAsNotDone();
+        storage.save(tasks);
+        ui.showTaskUnmarked(tasks.get(index));
+    }
 
-        if (!details.contains(" /by ")) {
-            throw new InvalidFormatException("Please specify the deadline using '/by'. Usage: deadline [description] /by [date]");
-        }
+    private void handleDelete(String input) throws JarvisException {
+        int index = Parser.parseTaskIndex(input, 7, "delete");
+        validateTaskIndex(index);
 
-        String[] parts = details.split(" /by ", 2);
-        String description = parts[0].trim();
-        String by = parts.length > 1 ? parts[1].trim() : "";
+        Task removed = tasks.remove(index);
+        storage.save(tasks);
+        ui.showTaskDeleted(removed, tasks.size());
+    }
 
-        if (description.isEmpty()) {
-            throw new EmptyDescriptionException("deadline");
-        }
+    private void handleTodo(String input) throws JarvisException {
+        String description = Parser.parseTodo(input);
+        Task task = new Todo(description);
+        addTask(task);
+    }
 
-        if (by.isEmpty()) {
-            throw new MissingArgumentException("when the task is due", "deadline [description] /by [date]");
-        }
-
-        Task newTask;
+    private void handleDeadline(String input) throws JarvisException {
+        String[] args = Parser.parseDeadline(input);
+        Task task;
         try {
-            newTask = new Deadline(description, by);
+            task = new Deadline(args[0], args[1]);
         } catch (IllegalArgumentException e) {
             throw new InvalidFormatException("Invalid date format. Please use yyyy-MM-dd or yyyy-MM-dd HHmm "
                     + "(e.g., 2019-10-15 or 2019-10-15 1800)");
         }
-        tasks.add(newTask);
-        storage.save(tasks);
-        System.out.println("____________________________________________________________");
-        System.out.println("Got it. I've added this task:");
-        System.out.println("  " + newTask);
-        System.out.println("Now you have " + tasks.size() + " tasks in the list.");
-        System.out.println("____________________________________________________________");
+        addTask(task);
     }
 
-    private static void handleEvent(String input) throws JarvisException {
-        String details = input.substring(6).trim();
-
-        if (details.isEmpty()) {
-            throw new EmptyDescriptionException("event");
-        }
-
-        if (!details.contains(" /from ") || !details.contains(" /to ")) {
-            throw new InvalidFormatException("Please specify the event time using '/from' and '/to'. Usage: event [description] /from [start] /to [end]");
-        }
-
-        String[] parts = details.split(" /from | /to ");
-
-        if (parts.length < 3) {
-            throw new InvalidFormatException("Please provide both start and end times. Usage: event [description] /from [start] /to [end]");
-        }
-
-        String description = parts[0].trim();
-        String from = parts[1].trim();
-        String to = parts[2].trim();
-
-        if (description.isEmpty()) {
-            throw new EmptyDescriptionException("event");
-        }
-
-        if (from.isEmpty()) {
-            throw new MissingArgumentException("when the event starts", "event [description] /from [start] /to [end]");
-        }
-
-        if (to.isEmpty()) {
-            throw new MissingArgumentException("when the event ends", "event [description] /from [start] /to [end]");
-        }
-
-        Task newTask;
+    private void handleEvent(String input) throws JarvisException {
+        String[] args = Parser.parseEvent(input);
+        Task task;
         try {
-            newTask = new Event(description, from, to);
+            task = new Event(args[0], args[1], args[2]);
         } catch (IllegalArgumentException e) {
             throw new InvalidFormatException("Invalid date format. Please use yyyy-MM-dd or yyyy-MM-dd HHmm "
                     + "(e.g., 2019-10-15 or 2019-10-15 1800)");
         }
-        tasks.add(newTask);
+        addTask(task);
+    }
+
+    private void addTask(Task task) {
+        tasks.add(task);
         storage.save(tasks);
-        System.out.println("____________________________________________________________");
-        System.out.println("Got it. I've added this task:");
-        System.out.println("  " + newTask);
-        System.out.println("Now you have " + tasks.size() + " tasks in the list.");
-        System.out.println("____________________________________________________________");
+        ui.showTaskAdded(task, tasks.size());
+    }
+
+    private void validateTaskIndex(int index) throws JarvisException {
+        if (index < 0 || index >= tasks.size()) {
+            throw new InvalidTaskNumberException(index + 1, tasks.size());
+        }
+    }
+
+    /**
+     * Main entry point for the application.
+     *
+     * @param args Command line arguments (not used).
+     */
+    public static void main(String[] args) {
+        new Jarvis().run();
     }
 }
