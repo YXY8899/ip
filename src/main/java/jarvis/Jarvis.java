@@ -70,6 +70,9 @@ public class Jarvis {
                 case "event":
                     handleEvent(input);
                     break;
+                case "find":
+                    handleFind(input);
+                    break;
                 case "":
                     // Do nothing for empty input
                     break;
@@ -139,6 +142,12 @@ public class Jarvis {
                     + "(e.g., 2019-10-15 or 2019-10-15 1800)");
         }
         addTask(task);
+    }
+
+    private void handleFind(String input) throws JarvisException {
+        String keyword = Parser.parseFind(input);
+        TaskList matchingTasks = tasks.findTasks(keyword);
+        ui.showFoundTasks(matchingTasks);
     }
 
     private void addTask(Task task) {
