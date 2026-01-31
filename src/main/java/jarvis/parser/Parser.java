@@ -119,6 +119,21 @@ public class Parser {
     }
 
     /**
+     * Parses a find command and returns the search keyword.
+     *
+     * @param input The user input string.
+     * @return The keyword to search for.
+     * @throws JarvisException If the keyword is empty.
+     */
+    public static String parseFind(String input) throws JarvisException {
+        String keyword = input.substring(5).trim();
+        if (keyword.isEmpty()) {
+            throw new MissingArgumentException("a keyword to search for", "find [keyword]");
+        }
+        return keyword;
+    }
+
+    /**
      * Parses a task index from commands like mark, unmark, delete.
      *
      * @param input The user input string.
