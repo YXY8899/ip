@@ -18,6 +18,7 @@ public class Parser {
      * @return The command type.
      */
     public static String getCommand(String input) {
+        assert input != null : "Input should not be null";
         return input.split(" ")[0].toLowerCase();
     }
 

@@ -25,6 +25,9 @@ public class MainWindow {
     private Image userImage = new Image(this.getClass().getResourceAsStream("/images/User.png"));
     private Image jarvisImage = new Image(this.getClass().getResourceAsStream("/images/Jarvis.png"));
 
+    /**
+     * Initializes the main window.
+     */
     @FXML
     public void initialize() {
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
