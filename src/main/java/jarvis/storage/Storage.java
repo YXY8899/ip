@@ -28,6 +28,8 @@ public class Storage {
      * @param filePath The path to the file for storing tasks.
      */
     public Storage(String filePath) {
+        assert filePath != null : "File path should not be null";
+        assert !filePath.isEmpty() : "File path should not be empty";
         this.filePath = filePath;
     }
 
@@ -112,6 +114,7 @@ public class Storage {
      * @param tasks The TaskList to save.
      */
     public void save(TaskList tasks) {
+        assert tasks != null : "TaskList to save should not be null";
         try {
             File file = new File(filePath);
             File parentDir = file.getParentFile();

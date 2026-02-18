@@ -30,6 +30,7 @@ public class TaskList {
      * @param task The task to add.
      */
     public void add(Task task) {
+        assert task != null : "Task to add should not be null";
         tasks.add(task);
     }
 
@@ -40,6 +41,7 @@ public class TaskList {
      * @return The removed task.
      */
     public Task remove(int index) {
+        assert index >= 0 && index < tasks.size() : "Index out of bounds";
         return tasks.remove(index);
     }
 
@@ -50,6 +52,7 @@ public class TaskList {
      * @return The task at the index.
      */
     public Task get(int index) {
+        assert index >= 0 && index < tasks.size() : "Index out of bounds";
         return tasks.get(index);
     }
 
@@ -78,6 +81,7 @@ public class TaskList {
      * @return A TaskList containing all matching tasks.
      */
     public TaskList findTasks(String keyword) {
+        assert keyword != null : "Search keyword should not be null";
         TaskList matchingTasks = new TaskList();
         String lowerKeyword = keyword.toLowerCase();
         for (Task task : tasks) {
