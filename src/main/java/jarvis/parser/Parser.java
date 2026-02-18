@@ -10,6 +10,10 @@ import jarvis.exception.MissingArgumentException;
  * Parses user input and extracts command information.
  */
 public class Parser {
+    private static final int TODO_PREFIX_LENGTH = 5;
+    private static final int DEADLINE_PREFIX_LENGTH = 9;
+    private static final int EVENT_PREFIX_LENGTH = 6;
+    private static final int FIND_PREFIX_LENGTH = 5;
 
     /**
      * Parses the user input and returns the command type.
@@ -29,7 +33,7 @@ public class Parser {
      * @throws JarvisException If the description is empty.
      */
     public static String parseTodo(String input) throws JarvisException {
-        String description = input.substring(5).trim();
+        String description = input.substring(TODO_PREFIX_LENGTH).trim();
         if (description.isEmpty()) {
             throw new EmptyDescriptionException("todo");
         }
@@ -44,7 +48,7 @@ public class Parser {
      * @throws JarvisException If the format is invalid.
      */
     public static String[] parseDeadline(String input) throws JarvisException {
-        String details = input.substring(9).trim();
+        String details = input.substring(DEADLINE_PREFIX_LENGTH).trim();
 
         if (details.isEmpty()) {
             throw new EmptyDescriptionException("deadline");
@@ -78,7 +82,7 @@ public class Parser {
      * @throws JarvisException If the format is invalid.
      */
     public static String[] parseEvent(String input) throws JarvisException {
-        String details = input.substring(6).trim();
+        String details = input.substring(EVENT_PREFIX_LENGTH).trim();
 
         if (details.isEmpty()) {
             throw new EmptyDescriptionException("event");
@@ -126,7 +130,7 @@ public class Parser {
      * @throws JarvisException If the keyword is empty.
      */
     public static String parseFind(String input) throws JarvisException {
-        String keyword = input.substring(5).trim();
+        String keyword = input.substring(FIND_PREFIX_LENGTH).trim();
         if (keyword.isEmpty()) {
             throw new MissingArgumentException("a keyword to search for", "find [keyword]");
         }

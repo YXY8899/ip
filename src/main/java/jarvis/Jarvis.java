@@ -18,6 +18,8 @@ import jarvis.ui.Ui;
  */
 public class Jarvis {
     private static final String FILE_PATH = "./data/jarvis.txt";
+    private static final String DATE_FORMAT_ERROR = "Invalid date format. Please use yyyy-MM-dd or yyyy-MM-dd HHmm "
+            + "(e.g., 2019-10-15 or 2019-10-15 1800)";
 
     private Storage storage;
     private TaskList tasks;
@@ -137,8 +139,7 @@ public class Jarvis {
         try {
             task = new Deadline(args[0], args[1]);
         } catch (IllegalArgumentException e) {
-            throw new InvalidFormatException("Invalid date format. Please use yyyy-MM-dd or yyyy-MM-dd HHmm "
-                    + "(e.g., 2019-10-15 or 2019-10-15 1800)");
+            throw new InvalidFormatException(DATE_FORMAT_ERROR);
         }
         addTask(task);
     }
@@ -149,8 +150,7 @@ public class Jarvis {
         try {
             task = new Event(args[0], args[1], args[2]);
         } catch (IllegalArgumentException e) {
-            throw new InvalidFormatException("Invalid date format. Please use yyyy-MM-dd or yyyy-MM-dd HHmm "
-                    + "(e.g., 2019-10-15 or 2019-10-15 1800)");
+            throw new InvalidFormatException(DATE_FORMAT_ERROR);
         }
         addTask(task);
     }
@@ -260,8 +260,7 @@ public class Jarvis {
         try {
             task = new Deadline(args[0], args[1]);
         } catch (IllegalArgumentException e) {
-            throw new InvalidFormatException("Invalid date format. Please use yyyy-MM-dd or yyyy-MM-dd HHmm "
-                    + "(e.g., 2019-10-15 or 2019-10-15 1800)");
+            throw new InvalidFormatException(DATE_FORMAT_ERROR);
         }
         return addTaskAndGetResponse(task);
     }
@@ -272,8 +271,7 @@ public class Jarvis {
         try {
             task = new Event(args[0], args[1], args[2]);
         } catch (IllegalArgumentException e) {
-            throw new InvalidFormatException("Invalid date format. Please use yyyy-MM-dd or yyyy-MM-dd HHmm "
-                    + "(e.g., 2019-10-15 or 2019-10-15 1800)");
+            throw new InvalidFormatException(DATE_FORMAT_ERROR);
         }
         return addTaskAndGetResponse(task);
     }
