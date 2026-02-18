@@ -15,6 +15,11 @@ import jarvis.task.Todo;
  * Handles loading and saving tasks to a file.
  */
 public class Storage {
+    private static final String TODO_TYPE = "T";
+    private static final String DEADLINE_TYPE = "D";
+    private static final String EVENT_TYPE = "E";
+    private static final String DONE_MARKER = "1";
+
     private String filePath;
 
     /**
@@ -65,23 +70,23 @@ public class Storage {
         }
 
         String type = parts[0].trim();
-        boolean isDone = parts[1].trim().equals("1");
+        boolean isDone = parts[1].trim().equals(DONE_MARKER);
         String description = parts[2].trim();
 
         Task task = null;
 
         try {
             switch (type) {
-            case "T":
+            case TODO_TYPE:
                 task = new Todo(description);
                 break;
-            case "D":
+            case DEADLINE_TYPE:
                 if (parts.length >= 4) {
                     String by = parts[3].trim();
                     task = new Deadline(description, by);
                 }
                 break;
-            case "E":
+            case EVENT_TYPE:
                 if (parts.length >= 5) {
                     String from = parts[3].trim();
                     String to = parts[4].trim();
