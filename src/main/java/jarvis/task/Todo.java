@@ -22,4 +22,13 @@ public class Todo extends Task {
     public String toString() {
         return "[T]" + super.toString();
     }
+
+    @Override
+    public Task copy() {
+        Todo copy = new Todo(this.description);
+        if (this.isDone) {
+            copy.markAsDone();
+        }
+        return copy;
+    }
 }

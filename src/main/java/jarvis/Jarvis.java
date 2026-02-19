@@ -23,6 +23,7 @@ public class Jarvis {
 
     private Storage storage;
     private TaskList tasks;
+    private TaskList previousTasks;
     private Ui ui;
 
     /**
@@ -86,6 +87,9 @@ public class Jarvis {
                 case "find":
                     handleFind(input);
                     break;
+                case "undo":
+                    handleUndo();
+                    break;
                 case "":
                     // Do nothing for empty input
                     break;
@@ -103,7 +107,7 @@ public class Jarvis {
     private void handleMark(String input) throws JarvisException {
         int index = Parser.parseTaskIndex(input, 5, "mark");
         validateTaskIndex(index);
-
+        saveState();
         tasks.get(index).markAsDone();
         storage.save(tasks);
         ui.showTaskMarked(tasks.get(index));
@@ -112,7 +116,7 @@ public class Jarvis {
     private void handleUnmark(String input) throws JarvisException {
         int index = Parser.parseTaskIndex(input, 7, "unmark");
         validateTaskIndex(index);
-
+        saveState();
         tasks.get(index).markAsNotDone();
         storage.save(tasks);
         ui.showTaskUnmarked(tasks.get(index));
@@ -121,7 +125,7 @@ public class Jarvis {
     private void handleDelete(String input) throws JarvisException {
         int index = Parser.parseTaskIndex(input, 7, "delete");
         validateTaskIndex(index);
-
+        saveState();
         Task removed = tasks.remove(index);
         storage.save(tasks);
         ui.showTaskDeleted(removed, tasks.size());
@@ -162,6 +166,7 @@ public class Jarvis {
     }
 
     private void addTask(Task task) {
+        saveState();
         tasks.add(task);
         storage.save(tasks);
         ui.showTaskAdded(task, tasks.size());
@@ -171,6 +176,20 @@ public class Jarvis {
         if (index < 0 || index >= tasks.size()) {
             throw new InvalidTaskNumberException(index + 1, tasks.size());
         }
+    }
+
+    private void saveState() {
+        previousTasks = tasks.copy();
+    }
+
+    private void handleUndo() throws JarvisException {
+        if (previousTasks == null) {
+            throw new JarvisException("No command to undo!");
+        }
+        tasks = previousTasks;
+        previousTasks = null;
+        storage.save(tasks);
+        ui.showMessage("Last command undone!");
     }
 
     /**
@@ -202,6 +221,8 @@ public class Jarvis {
                 return getEventResponse(input);
             case "find":
                 return getFindResponse(input);
+            case "undo":
+                return getUndoResponse();
             case "":
                 return "";
             default:
@@ -226,6 +247,7 @@ public class Jarvis {
     private String getMarkResponse(String input) throws JarvisException {
         int index = Parser.parseTaskIndex(input, 5, "mark");
         validateTaskIndex(index);
+        saveState();
         tasks.get(index).markAsDone();
         storage.save(tasks);
         return "Nice! I've marked this task as done:\n  " + tasks.get(index);
@@ -234,6 +256,7 @@ public class Jarvis {
     private String getUnmarkResponse(String input) throws JarvisException {
         int index = Parser.parseTaskIndex(input, 7, "unmark");
         validateTaskIndex(index);
+        saveState();
         tasks.get(index).markAsNotDone();
         storage.save(tasks);
         return "OK, I've marked this task as not done yet:\n  " + tasks.get(index);
@@ -242,6 +265,7 @@ public class Jarvis {
     private String getDeleteResponse(String input) throws JarvisException {
         int index = Parser.parseTaskIndex(input, 7, "delete");
         validateTaskIndex(index);
+        saveState();
         Task removed = tasks.remove(index);
         storage.save(tasks);
         return String.format("Noted. I've removed this task:\n  %s\nNow you have %d tasks in the list.",
@@ -289,7 +313,18 @@ public class Jarvis {
         return sb.toString().trim();
     }
 
+    private String getUndoResponse() throws JarvisException {
+        if (previousTasks == null) {
+            throw new JarvisException("No command to undo!");
+        }
+        tasks = previousTasks;
+        previousTasks = null;
+        storage.save(tasks);
+        return "Last command undone!";
+    }
+
     private String addTaskAndGetResponse(Task task) {
+        saveState();
         tasks.add(task);
         storage.save(tasks);
         return String.format("Got it. I've added this task:\n  %s\nNow you have %d tasks in the list.",

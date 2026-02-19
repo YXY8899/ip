@@ -75,6 +75,19 @@ public class TaskList {
     }
 
     /**
+     * Creates a deep copy of this task list.
+     *
+     * @return A new TaskList with copies of all tasks.
+     */
+    public TaskList copy() {
+        TaskList copy = new TaskList();
+        for (Task task : tasks) {
+            copy.add(task.copy());
+        }
+        return copy;
+    }
+
+    /**
      * Finds all tasks that contain the specified keyword in their description.
      *
      * @param keyword The keyword to search for.

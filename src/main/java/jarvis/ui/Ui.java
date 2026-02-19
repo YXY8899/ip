@@ -66,6 +66,17 @@ public class Ui {
     }
 
     /**
+     * Displays a general message.
+     *
+     * @param message The message to display.
+     */
+    public void showMessage(String message) {
+        showLine();
+        System.out.println(message);
+        showLine();
+    }
+
+    /**
      * Displays a message indicating a task was added.
      *
      * @param task The task that was added.

@@ -66,4 +66,13 @@ public class Event extends Task {
         return "[E]" + super.toString() + " (from: " + from.format(OUTPUT_FORMAT)
                 + " to: " + to.format(OUTPUT_FORMAT) + ")";
     }
+
+    @Override
+    public Task copy() {
+        Event copy = new Event(this.description, this.from.format(FILE_FORMAT), this.to.format(FILE_FORMAT));
+        if (this.isDone) {
+            copy.markAsDone();
+        }
+        return copy;
+    }
 }

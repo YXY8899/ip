@@ -48,6 +48,19 @@ public class Task {
         return (isDone ? "1" : "0") + " | " + description;
     }
 
+    /**
+     * Creates a copy of this task.
+     *
+     * @return A new Task with the same properties.
+     */
+    public Task copy() {
+        Task copy = new Task(this.description);
+        if (this.isDone) {
+            copy.markAsDone();
+        }
+        return copy;
+    }
+
     @Override
     public String toString() {
         return "[" + getStatusIcon() + "] " + description;

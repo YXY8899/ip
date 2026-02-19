@@ -54,4 +54,13 @@ public class Deadline extends Task {
     public String toString() {
         return "[D]" + super.toString() + " (by: " + by.format(OUTPUT_FORMAT) + ")";
     }
+
+    @Override
+    public Task copy() {
+        Deadline copy = new Deadline(this.description, this.by.format(FILE_FORMAT));
+        if (this.isDone) {
+            copy.markAsDone();
+        }
+        return copy;
+    }
 }
