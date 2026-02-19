@@ -33,8 +33,8 @@ public class Ui {
      */
     public void showWelcome() {
         showLine();
-        System.out.println("Hello Master! I'm Jarvis your personal assistance!");
-        System.out.println("How may I serve you?");
+        System.out.println("Good day, Master. I am Jarvis, your devoted butler.");
+        System.out.println("How may I be of service to you today?");
         showLine();
     }
 
@@ -43,7 +43,7 @@ public class Ui {
      */
     public void showGoodbye() {
         showLine();
-        System.out.println("Goodbye Master. Hope to see you again soon!");
+        System.out.println("Farewell, Master. It has been an honour to serve you. Until next time.");
         showLine();
     }
 
@@ -84,9 +84,9 @@ public class Ui {
      */
     public void showTaskAdded(Task task, int totalTasks) {
         showLine();
-        System.out.println("Got it. I've added this task:");
+        System.out.println("Very well, Master. I have added this task to your list:");
         System.out.println("  " + task);
-        System.out.println("Now you have " + totalTasks + " tasks in the list.");
+        System.out.println("You now have " + totalTasks + " tasks in your schedule, Master.");
         showLine();
     }
 
@@ -98,9 +98,9 @@ public class Ui {
      */
     public void showTaskDeleted(Task task, int totalTasks) {
         showLine();
-        System.out.println("Noted. I've removed this task:");
+        System.out.println("As you wish, Master. I have removed this task:");
         System.out.println("  " + task);
-        System.out.println("Now you have " + totalTasks + " tasks in the list.");
+        System.out.println("You now have " + totalTasks + " tasks remaining, Master.");
         showLine();
     }
 
@@ -111,7 +111,7 @@ public class Ui {
      */
     public void showTaskMarked(Task task) {
         showLine();
-        System.out.println("Nice! I've marked this task as completed:");
+        System.out.println("Splendid, Master. I have marked this task as completed:");
         System.out.println("  " + task);
         showLine();
     }
@@ -123,7 +123,7 @@ public class Ui {
      */
     public void showTaskUnmarked(Task task) {
         showLine();
-        System.out.println("OK, I've revert the task completion");
+        System.out.println("Understood, Master. I have reverted the task status:");
         System.out.println("  " + task);
         showLine();
     }
@@ -135,7 +135,7 @@ public class Ui {
      */
     public void showTaskList(TaskList tasks) {
         showLine();
-        System.out.println("Here are the tasks in your archive:");
+        System.out.println("Here are the tasks in your schedule, Master:");
         for (int i = 0; i < tasks.size(); i++) {
             System.out.println((i + 1) + "." + tasks.get(i));
         }
@@ -150,9 +150,9 @@ public class Ui {
     public void showFoundTasks(TaskList tasks) {
         showLine();
         if (tasks.size() == 0) {
-            System.out.println("No matching tasks found.");
+            System.out.println("My apologies, Master. No matching tasks were found.");
         } else {
-            System.out.println("Here are the matching tasks in your list:");
+            System.out.println("Here are the matching tasks, Master:");
             for (int i = 0; i < tasks.size(); i++) {
                 System.out.println((i + 1) + "." + tasks.get(i));
             }

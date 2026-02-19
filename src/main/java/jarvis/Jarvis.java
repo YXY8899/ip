@@ -189,7 +189,7 @@ public class Jarvis {
         tasks = previousTasks;
         previousTasks = null;
         storage.save(tasks);
-        ui.showMessage("Last command undone!");
+        ui.showMessage("Very well, Master. I have undone the last command.");
     }
 
     /**
@@ -204,7 +204,7 @@ public class Jarvis {
         try {
             switch (command) {
             case "bye":
-                return "Goodbye! Hope to see you again soon!";
+                return "Farewell, Master. It has been an honour to serve you. Until next time.";
             case "list":
                 return getListResponse();
             case "mark":
@@ -235,9 +235,9 @@ public class Jarvis {
 
     private String getListResponse() {
         if (tasks.size() == 0) {
-            return "Your task list is empty!";
+            return "Your schedule is clear, Master. No tasks at the moment.";
         }
-        StringBuilder sb = new StringBuilder("Here are the tasks in your list:\n");
+        StringBuilder sb = new StringBuilder("Here are the tasks in your schedule, Master:\n");
         for (int i = 0; i < tasks.size(); i++) {
             sb.append(String.format("%d. %s\n", i + 1, tasks.get(i)));
         }
@@ -250,7 +250,7 @@ public class Jarvis {
         saveState();
         tasks.get(index).markAsDone();
         storage.save(tasks);
-        return "Nice! I've marked this task as done:\n  " + tasks.get(index);
+        return "Splendid, Master. I have marked this task as completed:\n  " + tasks.get(index);
     }
 
     private String getUnmarkResponse(String input) throws JarvisException {
@@ -259,7 +259,7 @@ public class Jarvis {
         saveState();
         tasks.get(index).markAsNotDone();
         storage.save(tasks);
-        return "OK, I've marked this task as not done yet:\n  " + tasks.get(index);
+        return "Understood, Master. I have reverted the task status:\n  " + tasks.get(index);
     }
 
     private String getDeleteResponse(String input) throws JarvisException {
@@ -268,8 +268,8 @@ public class Jarvis {
         saveState();
         Task removed = tasks.remove(index);
         storage.save(tasks);
-        return String.format("Noted. I've removed this task:\n  %s\nNow you have %d tasks in the list.",
-                removed, tasks.size());
+        return String.format("As you wish, Master. I have removed this task:\n  %s\n"
+                + "You now have %d tasks remaining, Master.", removed, tasks.size());
     }
 
     private String getTodoResponse(String input) throws JarvisException {
@@ -304,9 +304,9 @@ public class Jarvis {
         String keyword = Parser.parseFind(input);
         TaskList matchingTasks = tasks.findTasks(keyword);
         if (matchingTasks.size() == 0) {
-            return "No matching tasks found.";
+            return "My apologies, Master. No matching tasks were found.";
         }
-        StringBuilder sb = new StringBuilder("Here are the matching tasks in your list:\n");
+        StringBuilder sb = new StringBuilder("Here are the matching tasks, Master:\n");
         for (int i = 0; i < matchingTasks.size(); i++) {
             sb.append(String.format("%d. %s\n", i + 1, matchingTasks.get(i)));
         }
@@ -320,15 +320,15 @@ public class Jarvis {
         tasks = previousTasks;
         previousTasks = null;
         storage.save(tasks);
-        return "Last command undone!";
+        return "Very well, Master. I have undone the last command.";
     }
 
     private String addTaskAndGetResponse(Task task) {
         saveState();
         tasks.add(task);
         storage.save(tasks);
-        return String.format("Got it. I've added this task:\n  %s\nNow you have %d tasks in the list.",
-                task, tasks.size());
+        return String.format("Very well, Master. I have added this task:\n  %s\n"
+                + "You now have %d tasks in your schedule, Master.", task, tasks.size());
     }
 
     /**
