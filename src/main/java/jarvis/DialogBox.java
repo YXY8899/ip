@@ -13,6 +13,8 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
 
 /**
  * Represents a dialog box consisting of an ImageView and a Label.
@@ -22,6 +24,8 @@ public class DialogBox extends HBox {
     private Label dialog;
     @FXML
     private ImageView displayPicture;
+    @FXML
+    private VBox textContainer;
 
     private DialogBox(String text, Image img) {
         try {
@@ -36,6 +40,15 @@ public class DialogBox extends HBox {
         dialog.setText(text);
         dialog.setMinHeight(Label.USE_PREF_SIZE);
         displayPicture.setImage(img);
+        applyCircleClip();
+    }
+
+    /**
+     * Applies a circular clip to the profile picture.
+     */
+    private void applyCircleClip() {
+        Circle clip = new Circle(17.5, 17.5, 17.5);
+        displayPicture.setClip(clip);
     }
 
     /**
@@ -49,18 +62,52 @@ public class DialogBox extends HBox {
     }
 
     /**
+     * Applies user styling to the dialog box.
+     */
+    private void applyUserStyle() {
+        textContainer.getStyleClass().add("user-dialog");
+    }
+
+    /**
+     * Applies Jarvis styling to the dialog box.
+     */
+    private void applyJarvisStyle() {
+        textContainer.getStyleClass().add("jarvis-dialog");
+    }
+
+    /**
+     * Applies error styling to the dialog box.
+     */
+    private void applyErrorStyle() {
+        textContainer.getStyleClass().add("error-dialog");
+    }
+
+    /**
      * Creates a dialog box for the user.
      */
     public static DialogBox getUserDialog(String text, Image img) {
-        return new DialogBox(text, img);
+        DialogBox db = new DialogBox(text, img);
+        db.applyUserStyle();
+        return db;
     }
 
     /**
      * Creates a dialog box for Jarvis.
      */
     public static DialogBox getJarvisDialog(String text, Image img) {
-        var db = new DialogBox(text, img);
+        DialogBox db = new DialogBox(text, img);
         db.flip();
+        db.applyJarvisStyle();
+        return db;
+    }
+
+    /**
+     * Creates an error dialog box for Jarvis.
+     */
+    public static DialogBox getErrorDialog(String text, Image img) {
+        DialogBox db = new DialogBox(text, img);
+        db.flip();
+        db.applyErrorStyle();
         return db;
     }
 }

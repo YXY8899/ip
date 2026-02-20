@@ -1,0 +1,76 @@
+/* Main window styling */
+.root {
+    -fx-background-color: #2b2b2b;
+}
+
+.scroll-pane {
+    -fx-background: #2b2b2b;
+    -fx-background-color: #2b2b2b;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: #2b2b2b;
+}
+
+/* Text field styling */
+.text-field {
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: #ffffff;
+    -fx-prompt-text-fill: #888888;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-padding: 8;
+}
+
+/* Send button styling */
+.button {
+    -fx-background-color: #4a9eff;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #3a8eef;
+}
+
+/* User dialog styling */
+.user-dialog {
+    -fx-background-color: #4a9eff;
+    -fx-background-radius: 15 15 0 15;
+    -fx-padding: 10;
+}
+
+.user-dialog .label {
+    -fx-text-fill: white;
+}
+
+/* Jarvis dialog styling */
+.jarvis-dialog {
+    -fx-background-color: #3c3f41;
+    -fx-background-radius: 15 15 15 0;
+    -fx-padding: 10;
+}
+
+.jarvis-dialog .label {
+    -fx-text-fill: #e0e0e0;
+}
+
+/* Error dialog styling */
+.error-dialog {
+    -fx-background-color: #d32f2f;
+    -fx-background-radius: 15 15 15 0;
+    -fx-padding: 10;
+}
+
+.error-dialog .label {
+    -fx-text-fill: white;
+}
+
+/* VBox container */
+.dialog-container {
+    -fx-background-color: #2b2b2b;
+    -fx-spacing: 10;
+    -fx-padding: 10;
+}

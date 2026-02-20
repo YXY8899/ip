@@ -22,7 +22,10 @@ public class Main extends Application {
             AnchorPane ap = fxmlLoader.load();
             Scene scene = new Scene(ap);
             stage.setScene(scene);
-            stage.setTitle("Jarvis");
+            stage.setTitle("Jarvis - Your Personal Butler");
+            stage.setMinWidth(350);
+            stage.setMinHeight(400);
+            stage.setResizable(true);
             fxmlLoader.<MainWindow>getController().setJarvis(jarvis);
             stage.show();
         } catch (IOException e) {

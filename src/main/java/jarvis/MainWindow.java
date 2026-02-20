@@ -45,7 +45,8 @@ public class MainWindow {
      * Shows the welcome message.
      */
     private void showWelcome() {
-        String welcome = "Hello! I'm Jarvis.\nWhat can I do for you?";
+        String welcome = "Good day, Master. I am Jarvis, your devoted butler.\n"
+                + "How may I be of service to you today?";
         dialogContainer.getChildren().add(DialogBox.getJarvisDialog(welcome, jarvisImage));
     }
 
@@ -59,10 +60,20 @@ public class MainWindow {
             return;
         }
         String response = jarvis.getResponse(input);
-        dialogContainer.getChildren().addAll(
-                DialogBox.getUserDialog(input, userImage),
-                DialogBox.getJarvisDialog(response, jarvisImage)
-        );
+        dialogContainer.getChildren().add(DialogBox.getUserDialog(input, userImage));
+
+        if (isErrorResponse(response)) {
+            dialogContainer.getChildren().add(DialogBox.getErrorDialog(response, jarvisImage));
+        } else {
+            dialogContainer.getChildren().add(DialogBox.getJarvisDialog(response, jarvisImage));
+        }
         userInput.clear();
+    }
+
+    /**
+     * Checks if the response is an error message.
+     */
+    private boolean isErrorResponse(String response) {
+        return response.startsWith("Error:") || response.startsWith("My apologies");
     }
 }
