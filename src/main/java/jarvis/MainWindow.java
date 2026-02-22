@@ -1,5 +1,6 @@
 package jarvis;
 
+import jarvis.parser.Parser;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -9,8 +10,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
-
-import jarvis.parser.Parser;
 
 /**
  * Controller for the main GUI.
