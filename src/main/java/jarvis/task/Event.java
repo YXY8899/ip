@@ -26,6 +26,9 @@ public class Event extends Task {
         super(description);
         this.from = parseDateTime(from);
         this.to = parseDateTime(to);
+        if (this.to.isBefore(this.from)) {
+            throw new IllegalArgumentException("Event end time cannot be earlier than start time.");
+        }
     }
 
     private LocalDateTime parseDateTime(String dateTimeStr) {
